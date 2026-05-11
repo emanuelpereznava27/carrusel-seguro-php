@@ -1,18 +1,34 @@
 <?php
-include 'db.php'; 
+include 'db.php';
+header('Content-Type: application/json');
 
-if (ob_get_length()) ob_clean(); 
+$offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+$direction = isset($_GET['direction']) ? $_GET['direction'] : 'next';
 
-// Consulta adaptada a PostgreSQL
-$query = "SELECT nombre, ruta FROM imagenes ORDER BY id DESC";
-$resultado = pg_query($conexion, $query);
+// Contar total
+$res_count = mysqli_query($conn, "SELECT COUNT(*) as total FROM imagenes");
+$row_count = mysqli_fetch_assoc($res_count);
+$total = $row_count['total'];
 
-$imagenes = [];
-while ($row = pg_fetch_assoc($resultado)) {
-    $imagenes[] = $row;
+if ($total == 0) {
+    echo json_encode(['success' => false, 'error' => 'No hay imágenes']);
+    exit();
 }
 
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode($imagenes);
-exit();
-?>
+// Calcular nuevo índice
+if ($direction == 'next') {
+    $offset = ($offset + 1) % $total;
+} else {
+    $offset = ($offset - 1 + $total) % $total;
+}
+
+// Obtener imagen
+$res = mysqli_query($conn, "SELECT * FROM imagenes LIMIT 1 OFFSET $offset");
+$row = mysqli_fetch_assoc($res);
+
+echo json_encode([
+    'success' => true,
+    'ruta' => $row['ruta'],
+    'nombre' => $row['nombre'],
+    'new_index' => $offset
+]);

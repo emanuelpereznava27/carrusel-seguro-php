@@ -1,14 +1,14 @@
 <?php
-// Configuración para PostgreSQL en Kali Linux
+// Configuración para MariaDB
 $host = "127.0.0.1";
 $user = "carrusel_admin";
 $pass = "kali123";
 $db   = "carrusel_dark_db";
 
-// La cadena de conexión en PostgreSQL es distinta
-$conexion = pg_connect("host=$host dbname=$db user=$user password=$pass");
+// Conexión para MariaDB/MySQL
+$conn = mysqli_connect($host, $user, $pass, $db);
 
-if (!$conexion) {
-    die("Error crítico de conexión a PostgreSQL.");
+if (!$conn) {
+    die("Error crítico de conexión a MariaDB: " . mysqli_connect_error());
 }
 ?>
