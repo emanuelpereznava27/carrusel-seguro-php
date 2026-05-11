@@ -1,14 +1,12 @@
-<?php
-// Configuración para MariaDB
+k<?php
 $host = "127.0.0.1";
 $user = "carrusel_admin";
 $pass = "kali123";
 $db   = "carrusel_dark_db";
 
-// Conexión para MariaDB/MySQL
-$conn = mysqli_connect($host, $user, $pass, $db);
+$conn = pg_connect("host=$host dbname=$db user=$user password=$pass");
 
 if (!$conn) {
-    die("Error crítico de conexión a MariaDB: " . mysqli_connect_error());
+    die("Error crítico de conexión a PostgreSQL.");
 }
 ?>
